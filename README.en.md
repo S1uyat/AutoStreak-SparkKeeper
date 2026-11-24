@@ -33,7 +33,7 @@ A fresh installation has no contacts or account credentials, and automatic real 
 4. After checking the intended recipients, enable **允许每日自动任务真实发送** (allow the daily task to send real messages) and save.
 5. Click **安装开机自启** (install the Windows sign-in task). You may then close the management panel.
 
-The task triggers 30 seconds after Windows sign-in and runs once per local calendar day. Its browser is hidden; check the logs for progress. A failed first run is not automatically retried that day. Resolve the cause and run manually if needed; a contact already attempted that day, including an uncertain result, will not be sent another message.
+The task triggers at Windows sign-in without an added delay and runs once per local calendar day. Its browser is hidden; check the logs for progress. A failed first run is not automatically retried that day. Resolve the cause and run manually if needed; a contact already attempted that day, including an uncertain result, will not be sent another message.
 
 Keep the EXE in its installed location. If you move it, reinstall the scheduled task. You can remove the task from the management panel. Avoid moving the EXE or opening the login browser while a task is running.
 
