@@ -1,4 +1,4 @@
-param(
+﻿param(
   [ValidateSet('install','uninstall','status','plan')][string]$Action='status',
   [string]$ExecutablePath='',
   [string]$TaskName='SparkKeeper_OnceAtLogon',
