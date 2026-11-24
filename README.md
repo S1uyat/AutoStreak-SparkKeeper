@@ -1,10 +1,17 @@
 # SparkKeeper
 
+**简体中文** | [English](README.en.md)
+
+![Vibe Coded](https://img.shields.io/badge/Vibe_Coded-AI_assisted-8A2BE2)
+![Built with OpenAI Codex](https://img.shields.io/badge/Built_with-OpenAI_Codex-412991)
+
+> **Vibe Coding 开发说明：** 本项目在 OpenAI Codex 的大量 AI 辅助下迭代开发，由维护者提出需求并进行本机测试。该标注说明开发方式，不代表正确性或安全认证。
+
 Windows 抖音好友火花维护工具：扫码登录、好友管理、每日去重、运行日志，以及登录 Windows 后执行一次的任务计划。任务执行完成后退出，不安装后台服务。
 
 ## 下载与使用
 
-从 GitHub Releases 下载 Windows x64 发布包，解压到固定目录（例如 `D:\Apps\SparkKeeper`），双击 `SparkKeeper.exe`。
+从 [GitHub Releases](https://github.com/S1uyat/AutoStreak-SparkKeeper/releases/latest) 下载 Windows x64 发布包，解压到固定目录（例如 `D:\Apps\SparkKeeper`），双击 `SparkKeeper.exe`。
 
 - 支持 Windows 10/11 x64，需要已安装 Microsoft Edge 和网络连接。
 - EXE 已包含 Python 与 Playwright，无需另装 Python。
