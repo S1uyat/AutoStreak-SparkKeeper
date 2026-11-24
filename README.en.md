@@ -1,5 +1,7 @@
 # SparkKeeper
 
+> **Download status: the outdated EXE and Windows binary ZIP have been removed. Use the main branch source and the instructions under “Run from source and build”. EXE instructions below apply only to self-built binaries.**
+
 [简体中文](README.md) | **English**
 
 ![Vibe Coded](https://img.shields.io/badge/Vibe_Coded-AI_assisted-8A2BE2)
