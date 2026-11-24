@@ -1,5 +1,7 @@
 # SparkKeeper
 
+> **下载状态：旧版 EXE 及 Windows 压缩包已下架，目前请使用 main 分支源码，按下方“源码运行与构建”启动。以下 EXE 使用说明仅适用于自行构建的版本。**
+
 **简体中文** | [English](README.en.md)
 
 ![Vibe Coded](https://img.shields.io/badge/Vibe_Coded-AI_assisted-8A2BE2)
