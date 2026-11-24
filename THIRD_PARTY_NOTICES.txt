@@ -1,0 +1,10 @@
+SparkKeeper bundles Python, Tcl/Tk, Playwright (including its Node.js driver), greenlet, and the PyInstaller bootloader.
+Third-party license texts are included under third_party_licenses/.
+Microsoft Edge/Chrome are not bundled and must be installed separately.
+
+playwright: 1.65.2
+greenlet: 3.5.6
+pyinstaller: 6.22.3
+Python: 3.14.10
+
+No license for SparkKeeper original code has been selected yet. Public repository availability alone does not grant an open-source license.
