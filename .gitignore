@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+config.json
+state.json
+edge_profile/
+logs/
+
+build/
+dist/
+work/
+backups/
+*.exe
+*.zip
+*.log
+*.lock
+discovered_contacts.json
