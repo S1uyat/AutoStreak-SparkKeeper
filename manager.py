@@ -132,7 +132,7 @@ class Manager(tk.Tk):
 
     def apply_theme(self):
         dark = self.theme.get() == 'dark'
-        bg, card, fg, muted = ('#000002', '#221f23', '#f5f5f7', '#c8c8c8') if dark else ('#ffffff', '#ffffff', '#1d1d1f', '#606068')
+        bg, card, fg, muted = ('#000002', '#221f23', '#c8c8c8', '#a2a2ac') if dark else ('#ffffff', '#ffffff', '#1d1d1f', '#606068')
         accent = '#0450d3' if dark else '#0533B0'
         border = '#45454b' if dark else '#c8c8c8'
         self.palette = (bg, card, fg, muted)
@@ -140,11 +140,11 @@ class Manager(tk.Tk):
         s = ttk.Style(self)
         s.configure('.', font=('Microsoft YaHei UI', 10), background=bg, foreground=fg)
         s.configure('TFrame', background=bg)
-        s.configure('TNotebook', background=bg, borderwidth=0)
-        s.configure('TNotebook.Tab', background=bg, foreground=muted, padding=(20, 10))
+        s.configure('TNotebook', background=bg, borderwidth=0, bordercolor=border, lightcolor=bg, darkcolor=bg)
+        s.configure('TNotebook.Tab', background=bg, foreground=muted, padding=(20, 10), bordercolor=border, lightcolor=bg, darkcolor=bg)
         s.map('TNotebook.Tab', background=[('selected', accent)], foreground=[('selected', '#ffffff')])
         s.configure('TLabel', background=bg, foreground=fg)
-        s.configure('Brand.TLabel', background=bg, foreground=fg if dark else accent)
+        s.configure('Brand.TLabel', background=bg, foreground='#f5f5f7' if dark else accent)
         s.configure('Muted.TLabel', background=bg, foreground=muted)
         s.configure('Card.TLabel', background=card, foreground=fg if dark else accent, bordercolor=border, relief='solid', borderwidth=1, font=('Microsoft YaHei UI', 11, 'bold'))
         s.configure('TButton', background=card, foreground=fg, padding=(12, 8), borderwidth=1, bordercolor=border, lightcolor=card, darkcolor=card)
@@ -153,15 +153,19 @@ class Manager(tk.Tk):
         s.map('Accent.TButton', background=[('active', '#082b8b')], foreground=[('active', '#ffffff')])
         s.configure('TSeparator', background=border)
         s.configure('TEntry', fieldbackground=card, foreground=fg, insertcolor=fg, padding=7, bordercolor=border, lightcolor=border, darkcolor=border)
-        s.configure('TCombobox', fieldbackground=card, foreground=fg, arrowcolor=fg)
+        s.configure('TCombobox', fieldbackground=card, background=card, foreground=fg, arrowcolor=fg, bordercolor=border, lightcolor=card, darkcolor=card)
         s.map('TCombobox', fieldbackground=[('readonly', card)], foreground=[('readonly', fg)])
-        s.configure('TCheckbutton', background=bg, foreground=fg)
+        s.configure('TCheckbutton', background=bg, foreground=fg, indicatorbackground=card, indicatorforeground=accent)
         s.map('TCheckbutton', background=[('active', bg)], foreground=[('active', fg)])
-        s.configure('Treeview', background=card, fieldbackground=card, foreground=fg, rowheight=34, borderwidth=1, bordercolor=border, lightcolor=border, darkcolor=border)
+        s.configure('Treeview', background=bg, fieldbackground=bg, foreground=fg, rowheight=34, borderwidth=1, bordercolor=border, lightcolor=border, darkcolor=border)
+        s.configure('Vertical.TScrollbar', background=card, troughcolor=bg, bordercolor=bg, arrowcolor=muted, lightcolor=card, darkcolor=card)
+        s.map('Vertical.TScrollbar', background=[('active', border)])
         s.configure('Treeview.Heading', background=bg, foreground=muted, padding=10, borderwidth=0)
         s.map('Treeview', background=[('selected', accent)], foreground=[('selected', 'white')])
         self.option_add('*TCombobox*Listbox.background', card)
         self.option_add('*TCombobox*Listbox.foreground', fg)
+        self.option_add('*TCombobox*Listbox.selectBackground', accent)
+        self.option_add('*TCombobox*Listbox.selectForeground', '#ffffff')
         for win in self.winfo_children():
             if isinstance(win, tk.Toplevel):
                 win.configure(bg=bg)
