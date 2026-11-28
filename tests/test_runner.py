@@ -72,6 +72,37 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(runner.run_once(scheduled=True), 0)
                 self.assertEqual(execute.call_count, 2)
 
+    def test_transient_startup_retry_is_bounded_and_cooled_down(self):
+        with patch.object(runner, 'log_setup', return_value=self.log), patch.object(runner, '_execute', side_effect=RuntimeError('net::ERR_PROXY_CONNECTION_FAILED')) as execute:
+            with patch.object(core.time, 'time', return_value=1000):
+                self.assertEqual(runner.run_once(scheduled=True), 1)
+                self.assertEqual(runner.run_once(scheduled=True), 0)
+                self.assertEqual(execute.call_count, 1)
+            for epoch in [2000, 3000, 4000]:
+                with patch.object(core.time, 'time', return_value=epoch):
+                    runner.run_once(scheduled=True)
+            self.assertEqual(execute.call_count, 3)
+
+    def test_single_contact_does_not_send_to_others(self):
+        with patch.object(runner, 'sync_playwright'), patch.object(runner, 'browser_context') as ctx, patch.object(runner, 'open_chat'), patch.object(runner, 'open_target') as target, patch.object(runner, 'send_message') as send:
+            ctx.return_value.pages = [MagicMock()]
+            self.assertEqual(runner._execute(self.log, True, 'test', '好友A'), 0)
+            self.assertEqual(target.call_args.args[1], '好友A')
+            send.assert_not_called()
+        with self.assertRaises(ValueError):
+            runner._execute(self.log, True, 'test', 'not configured')
+
+    def test_retryable_contact_retried_but_uncertain_not_retried(self):
+        core.record('好友A', 'uncertain')
+        with patch.object(runner, 'sync_playwright') as pw:
+            self.assertEqual(runner._execute(self.log, False, 'test'), 0)
+            pw.assert_not_called()
+        core.record('好友A', 'retryable')
+        with patch.object(runner, 'sync_playwright'), patch.object(runner, 'browser_context') as ctx, patch.object(runner, 'open_chat'), patch.object(runner, 'open_target'), patch.object(runner, 'send_message') as send:
+            ctx.return_value.pages = [MagicMock()]
+            runner._execute(self.log, False, 'test')
+            send.assert_called_once()
+
     def test_corrupt_state_fails_closed(self):
         core.STATE_FILE.write_text('{broken', encoding='utf-8')
         with patch.object(runner, 'log_setup', return_value=self.log), patch.object(runner, 'sync_playwright') as browser:
