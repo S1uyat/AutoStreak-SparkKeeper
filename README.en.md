@@ -1,13 +1,12 @@
 # SparkKeeper
 
-> **Download status: the outdated EXE and Windows binary ZIP have been removed. Use the main branch source and the instructions under “Run from source and build”. EXE instructions below apply only to self-built binaries.**
 
 [简体中文](README.md) | **English**
 
 ![Vibe Coded](https://img.shields.io/badge/Vibe_Coded-AI_assisted-8A2BE2)
 ![Built with OpenAI Codex](https://img.shields.io/badge/Built_with-OpenAI_Codex-412991)
 
-A Windows desktop tool for maintaining friend streaks on **Douyin (抖音, the Chinese version of TikTok)**. Sign in by scanning a QR code, choose your contacts, and schedule a daily message run at your first Windows sign-in of the day. The process exits when finished; no resident background service is installed.
+A Windows desktop tool for maintaining friend streaks on **Douyin (抖音, the Chinese version of TikTok)**. Sign in by scanning a QR code, choose your contacts, and schedule a daily message run at Windows sign-in and every day at midnight. The process exits when finished; no resident background service is installed.
 
 > **Vibe coding disclosure:** SparkKeeper is developed iteratively with substantial AI assistance from OpenAI Codex. The maintainer directs requirements and performs local testing. This describes the development process, not a certification of correctness or security.
 
@@ -35,7 +34,7 @@ A fresh installation has no contacts or account credentials, and automatic real 
 4. After checking the intended recipients, enable **允许每日自动任务真实发送** (allow the daily task to send real messages) and save.
 5. Click **安装开机自启** (install the Windows sign-in task). You may then close the management panel.
 
-The task triggers at Windows sign-in without an added delay and runs once per local calendar day. Its browser is hidden; check the logs for progress. A failed first run is not automatically retried that day. Resolve the cause and run manually if needed; a contact already attempted that day, including an uncertain result, will not be sent another message.
+The task triggers at Windows sign-in without an added delay and daily at 00:00 local time. If the PC stays on and you remain signed in, the next day runs without a restart. Daily deduplication prevents a second run on the same day. The task does not wake a sleeping PC; missed runs can start when available. If signed out, sign in again. After upgrading, reinstall the task from the management panel to apply the new triggers. Its browser is hidden; check the logs for progress. A failed first run is not automatically retried that day. Resolve the cause and run manually if needed; a contact already attempted that day, including an uncertain result, will not be sent another message.
 
 Keep the EXE in its installed location. If you move it, reinstall the scheduled task. You can remove the task from the management panel. Avoid moving the EXE or opening the login browser while a task is running.
 
