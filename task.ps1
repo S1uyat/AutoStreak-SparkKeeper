@@ -28,12 +28,13 @@ try {
     $Who = [Security.Principal.WindowsIdentity]::GetCurrent().Name
     $Act = New-ScheduledTaskAction -Execute $Py -Argument $Arguments -WorkingDirectory $Root
     $Trig = New-ScheduledTaskTrigger -AtLogOn -User $Who
+    $Daily = New-ScheduledTaskTrigger -Daily -At '00:00'
     # Start at logon without an additional scheduler delay.
     $Settings = New-ScheduledTaskSettingsSet -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 10) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
     $Principal = New-ScheduledTaskPrincipal -UserId $Who -LogonType Interactive -RunLevel Limited
-    Register-ScheduledTask -TaskName $TaskName -Action $Act -Trigger $Trig -Settings $Settings -Principal $Principal -Description '每日首次用户登录时执行；默认仅检查，由管理面板启用真实发送。程序完成后即退出。' -Force | Out-Null
+    Register-ScheduledTask -TaskName $TaskName -Action $Act -Trigger @($Trig, $Daily) -Settings $Settings -Principal $Principal -Description '登录时及每天零点触发，每日去重；默认仅检查，由管理面板启用真实发送。完成后退出。' -Force | Out-Null
     Write-Output "安装完成：$TaskName"
-    Write-Output '触发：用户登录后立即触发；无常驻程序；运行完成即退出。'
+    Write-Output '触发：用户登录时及每天00:00；每日去重；无常驻程序；运行完成即退出。'
   } elseif ($Action -eq 'uninstall') {
     $Found = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     if ($Found) { Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false }
