@@ -12,7 +12,7 @@ Windows 抖音好友火花维护工具：扫码登录、好友管理、每日去
 
 ## 下载与使用
 
-从 [GitHub Releases](https://github.com/S1uyat/AutoStreak-SparkKeeper/releases/latest) 下载 Windows x64 发布包，解压到固定目录（例如 `D:\Apps\SparkKeeper`），双击 `SparkKeeper.exe`。
+从 [GitHub Releases](https://github.com/S1uyat/AutoStreak-SparkKeeper/releases/latest) 下载 `SparkKeeper.exe`，保存到固定目录（例如 `D:\Apps\SparkKeeper`），双击 `SparkKeeper.exe`。
 
 - 支持 Windows 10/11 x64，需要已安装 Microsoft Edge 和网络连接。
 - EXE 已包含 Python 与 Playwright，无需另装 Python。
