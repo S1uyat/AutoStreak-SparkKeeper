@@ -18,7 +18,7 @@ def run_once(dry_run=False, scheduled=False):
         with ExecutionLock():
             if scheduled:
                 if not claim_scheduled_run():
-                    logger.info('今天首次登录任务已经执行，退出。')
+                    logger.info('今天的自动任务已经执行，退出。')
                     return 0
                 dry_run = dry_run or not get_config().get('auto_send', False)
                 kind = '仅检查，不发送' if dry_run else '正式发送'
