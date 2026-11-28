@@ -10,6 +10,14 @@ A Windows desktop tool for maintaining friend streaks on **Douyin (抖音, the C
 
 > **Vibe coding disclosure:** SparkKeeper is developed iteratively with substantial AI assistance from OpenAI Codex. The maintainer directs requirements and performs local testing. This describes the development process, not a certification of correctness or security.
 
+## New in v0.2.0
+
+- Two-page desktop UI with persistent light/dark themes. Light: white, `#0533B0`, `#C8C8C8`. Dark: `#000002`, `#221F23`, `#0450D3`.
+- Daily summary and per-contact explanations, single-contact dry run and sending.
+- Local audit of the latest 200 contact changes, with undo for the latest enable/pause change. Earlier changes cannot be reconstructed.
+- Bounded recovery for transient failures before sending. Uncertain sends are never automatically repeated.
+- Confirmation requires a new matching message bubble and a cleared editor, with a failure check. This is not a recipient delivery receipt.
+
 ## Features
 
 - Desktop management panel and manual QR-code sign-in.
@@ -34,7 +42,7 @@ A fresh installation has no contacts or account credentials, and automatic real 
 4. After checking the intended recipients, enable **允许每日自动任务真实发送** (allow the daily task to send real messages) and save.
 5. Click **安装开机自启** (install the Windows sign-in task). You may then close the management panel.
 
-The task triggers at Windows sign-in without an added delay and daily at 00:00 local time. If the PC stays on and you remain signed in, the next day runs without a restart. Daily deduplication prevents a second run on the same day. The task does not wake a sleeping PC; missed runs can start when available. If signed out, sign in again. After upgrading, reinstall the task from the management panel to apply the new triggers. Its browser is hidden; check the logs for progress. A failed first run is not automatically retried that day. Resolve the cause and run manually if needed; a contact already attempted that day, including an uncertain result, will not be sent another message.
+The task triggers at Windows sign-in without an added delay and daily at 00:00 local time. If the PC stays on and you remain signed in, the next day runs without a restart. Daily deduplication prevents repeated sends; eligible pre-send failures may be retried. The task does not wake a sleeping PC; missed runs can start when available. If signed out, sign in again. After upgrading, reinstall the task from the management panel to apply the new triggers. Its browser is hidden; check the logs for progress. Task Scheduler briefly checks every 15 minutes. Eligible transient pre-send failures can retry after at least 15 minutes, with at most three scheduled attempts per day (initial plus two retries). After completion, checks exit without opening a browser. Confirmed sends, uncertain outcomes and other failures are not automatically repeated. Login and verification require manual intervention.
 
 Keep the EXE in its installed location. If you move it, reinstall the scheduled task. You can remove the task from the management panel. Avoid moving the EXE or opening the login browser while a task is running.
 
@@ -52,6 +60,8 @@ The EXE and source version share the current Windows user's data by default. Upg
 .\SparkKeeper.exe --run --scheduled       # Daily run; respects automatic-send setting
 .\SparkKeeper.exe --run                   # Real sending; respects daily contact deduplication
 ```
+
+Single-contact check: `SparkKeeper.exe --run --dry-run --target "Exact contact name"`. Removing `--dry-run` enables real sending.
 
 The windowed EXE does not print results to the terminal. Read the run logs in the management panel.
 
