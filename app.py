@@ -5,7 +5,7 @@ import multiprocessing
 import sys
 from pathlib import Path
 
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 
 
 def self_test(report_path):
@@ -49,13 +49,14 @@ def main(argv=None):
     parser.add_argument('--run', action='store_true', help='Run once and exit')
     parser.add_argument('--scheduled', action='store_true', help='Daily first-logon mode')
     parser.add_argument('--dry-run', action='store_true', help='Never send messages')
+    parser.add_argument('--target', help='One enabled contact only')
     parser.add_argument('--self-test', metavar='REPORT_JSON', help='Offline packaging test')
     args = parser.parse_args(argv)
     if args.self_test:
         return self_test(args.self_test)
     if args.run or args.scheduled or args.dry_run:
         from runner import run_once
-        return run_once(dry_run=args.dry_run, scheduled=args.scheduled)
+        return run_once(dry_run=args.dry_run, scheduled=args.scheduled, **({'target': args.target} if args.target else {}))
     from manager import Manager
     Manager().mainloop()
     return 0
