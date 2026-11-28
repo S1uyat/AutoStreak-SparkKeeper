@@ -25,6 +25,18 @@ class StoreTests(unittest.TestCase):
         core.save_config(cfg)
         self.assertEqual(core.get_config()['contacts'][0]['name'], '朋友甲')
 
+    def test_toggle_audit_and_theme_persist(self):
+        cfg = core.get_config()
+        cfg['contacts'] = [{'name': 'A', 'enabled': True}]
+        core.save_config(cfg)
+        cfg['contacts'][0]['enabled'] = False
+        cfg['theme'] = 'dark'
+        core.save_config(cfg)
+        saved = core.get_config()
+        self.assertEqual(saved['theme'], 'dark')
+        self.assertEqual(saved['audit'][-1]['before'], True)
+        self.assertEqual(saved['audit'][-1]['after'], False)
+
     def test_duplicate_name_rejected(self):
         cfg = core.get_config()
         cfg['contacts'] = [{'name':'A'},{'name':'A'}]
