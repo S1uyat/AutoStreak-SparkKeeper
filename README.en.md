@@ -22,7 +22,7 @@ This is an English guide; the application interface is currently in Chinese.
 
 ## Download and setup
 
-Download the Windows x64 package from [GitHub Releases](https://github.com/S1uyat/AutoStreak-SparkKeeper/releases/latest), extract it to a permanent folder such as `D:\Apps\SparkKeeper`, and launch `SparkKeeper.exe`.
+Download `SparkKeeper.exe` from [GitHub Releases](https://github.com/S1uyat/AutoStreak-SparkKeeper/releases/latest), save it to a permanent folder such as `D:\Apps\SparkKeeper`, and launch `SparkKeeper.exe`.
 
 Requirements: Windows 10/11 x64, Microsoft Edge, and an internet connection. You do not need to install Python. Browser binaries are not bundled: the default `msedge` channel uses your installed Edge; `chrome` requires Chrome, and `chromium` requires a separately installed matching Playwright browser.
 
