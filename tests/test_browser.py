@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from playwright.sync_api import sync_playwright
 import browser
 
@@ -48,7 +49,7 @@ class BrowserSafetyTests(unittest.TestCase):
     def test_local_send_commits_before_click_and_confirms_bubble(self):
         # Offline fixture only: no network, account, or real recipient.
         self.page.set_content('''<div contenteditable="true" data-slate-editor="true" class="messageEditorinputArea"></div>
-        <button aria-label="发送" onclick="const d=document.createElement('div');d.className='messageMessageBoxisFromMe';d.textContent=document.querySelector('[contenteditable]').innerText;document.body.append(d)">发送</button>''')
+        <button aria-label="发送" onclick="const d=document.createElement('div');d.className='messageMessageBoxisFromMe';d.textContent=document.querySelector('[contenteditable]').innerText;document.body.append(d);document.querySelector('[contenteditable]').innerText='';">发送</button>''')
         calls=[]
         def before():
             self.assertEqual(self.page.locator(browser.OWN).count(),0)
@@ -56,6 +57,12 @@ class BrowserSafetyTests(unittest.TestCase):
         self.assertTrue(browser.send_message(self.page,'local test',before))
         self.assertEqual(calls,['pending'])
         self.assertEqual(self.page.locator(browser.OWN).inner_text(),'local test')
+
+    def test_unrelated_bubble_does_not_confirm_send(self):
+        self.page.set_content('''<div contenteditable="true"></div><button aria-label="发送" onclick="document.querySelector('[contenteditable]').innerText='';document.querySelector('aside').innerHTML='<div class=messageMessageBoxisFromMe>old unrelated message</div>'">发送</button><aside></aside>''')
+        with patch.object(browser, 'SEND_CONFIRM_SECONDS', 0.3):
+            with self.assertRaises(browser.UncertainSend):
+                browser.send_message(self.page, 'expected text', lambda: None)
 
     def test_search_waits_for_delayed_exact_result(self):
         self.page.set_content("""<input placeholder="搜索" oninput="setTimeout(()=>{document.querySelector('section').innerHTML='<div class=searchSearchPanelitem><span>A</span><button class=searchSearchPanelitemchat_btn>发消息</button></div>'},300)"><section></section>""")
