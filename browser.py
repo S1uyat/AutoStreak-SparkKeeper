@@ -18,6 +18,7 @@ HEADER = ('[class*="RightPanelHeader"]', '[class*="chatHeader"]', '[class*="Chat
 SEND = ('[class*="messageMsgInputpublishBtn"]', '.e2e-send-msg-bt', 'button[aria-label*="发送"]')
 OWN = '[class*="messageMessageBoxisFromMe"]'
 RISK = ('安全验证', '完成验证', '验证身份', '拖动滑块', '账号异常')
+SEND_CONFIRM_SECONDS = 40
 
 
 class NeedLogin(RuntimeError):
@@ -230,6 +231,12 @@ def _own_message_snapshot(page):
     return page.locator(OWN).evaluate_all('nodes => ({count:nodes.length, first:nodes.slice(0,3).map(n => n.outerHTML), last:nodes.slice(-3).map(n => n.outerHTML)})')
 
 
+def _matching_own_count(page, message):
+    expected = re.sub(r'[\s\u200b\ufeff]+', '', message)
+    return page.locator(OWN + ':visible').evaluate_all(
+        r"(nodes, expected) => nodes.filter(n => (n.innerText || '').replace(/[\s\u200b\ufeff]+/g, '').includes(expected)).length", expected)
+
+
 def send_message(page, message, before_send):
     """Return confirmed boolean; never retry after the click on an uncertain outcome."""
     check_guard(page)
@@ -248,7 +255,7 @@ def send_message(page, message, before_send):
     expected = re.sub(r'[\s\u200b\ufeff]+', '', message)
     if not plain or expected != plain:
         raise RuntimeError('输入框内容校验失败，未触发发送。')
-    before = _own_message_snapshot(page)
+    before = _matching_own_count(page, message)
     # Commit the pending status before touching the send button.
     before_send()
     btn = first_visible(page, SEND, 300)
@@ -256,15 +263,18 @@ def send_message(page, message, before_send):
         btn.click(timeout=5000)
     else:
         editor.press('Enter')
-    deadline = time.monotonic() + 40
+    deadline = time.monotonic() + SEND_CONFIRM_SECONDS
     while time.monotonic() < deadline:
         check_guard(page)
-        newer = _own_message_snapshot(page)
-        if newer != before and newer:
-            page.wait_for_timeout(650)
+        newer = _matching_own_count(page, message)
+        cleared = not re.sub(r'[\s\u200b\ufeff]+', '', editor.inner_text(timeout=2000))
+        if newer > before and cleared:
+            page.wait_for_timeout(1000)
+            check_guard(page)
             if page.get_by_text('发送失败', exact=False).locator('visible=true').count():
                 raise UncertainSend('已出现发送失败提示；不能确定是否已送达。')
-            return True
+            if _matching_own_count(page, message) > before:
+                return True
         page.wait_for_timeout(100)
     raise UncertainSend('已点击发送，但没有观察到新的己方消息气泡；为防重复，今天不再自动重试。')
 
