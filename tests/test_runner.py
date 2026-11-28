@@ -61,6 +61,17 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(runner.run_once(scheduled=True), 0)
             self.assertEqual(execute.call_count, 1)
 
+    def test_scheduled_run_on_next_day_without_restart(self):
+        with patch.object(runner, 'log_setup', return_value=self.log), patch.object(runner, '_execute', return_value=0) as execute:
+            with patch.object(core, 'today', return_value='2026-11-28'):
+                self.assertEqual(runner.run_once(scheduled=True), 0)
+                self.assertEqual(runner.run_once(scheduled=True), 0)
+                self.assertEqual(execute.call_count, 1)
+            with patch.object(core, 'today', return_value='2026-11-29'):
+                self.assertEqual(runner.run_once(scheduled=True), 0)
+                self.assertEqual(runner.run_once(scheduled=True), 0)
+                self.assertEqual(execute.call_count, 2)
+
     def test_corrupt_state_fails_closed(self):
         core.STATE_FILE.write_text('{broken', encoding='utf-8')
         with patch.object(runner, 'log_setup', return_value=self.log), patch.object(runner, 'sync_playwright') as browser:
