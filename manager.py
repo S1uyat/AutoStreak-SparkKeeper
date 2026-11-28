@@ -35,7 +35,7 @@ class Manager(tk.Tk):
             style.theme_use('vista')
         frame = ttk.Frame(self, padding=18)
         frame.pack(fill='both', expand=True)
-        ttk.Label(frame, text='SparkKeeper  ·  每天首次登录自动续火', font=('Microsoft YaHei UI', 17, 'bold')).pack(anchor='w')
+        ttk.Label(frame, text='SparkKeeper  ·  登录及每日零点自动续火', font=('Microsoft YaHei UI', 17, 'bold')).pack(anchor='w')
         ttk.Label(frame, text='不驻留后台。首次设置完成后，由 Windows 任务计划程序短暂执行，结束立即退出。', foreground='#555').pack(anchor='w', pady=(3, 12))
 
         line1 = ttk.Frame(frame)
