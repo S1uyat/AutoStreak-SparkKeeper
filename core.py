@@ -18,7 +18,7 @@ STATE_FILE = BASE / 'state.json'
 LOG_FILE = BASE / 'logs' / 'sparkkeeper.log'
 PROFILE = BASE / 'edge_profile'
 LOCK_FILE = BASE / 'once.lock'
-DEFAULT = {'message': '今天的火花来啦', 'contacts': [], 'channel': 'msedge', 'headless': True, 'auto_send': False}
+DEFAULT = {'message': '今天的火花来啦', 'contacts': [], 'channel': 'msedge', 'headless': True, 'auto_send': False, 'theme': 'light', 'audit': []}
 
 
 def ensure_dirs():
@@ -89,6 +89,14 @@ def validate_config(data):
 
 def save_config(data):
     validate_config(data)
+    old = get_config()
+    previous = {c['name']: c.get('enabled', True) for c in old['contacts']}
+    current = {c['name']: c.get('enabled', True) for c in data['contacts']}
+    audit = list(old.get('audit', []))
+    for name in previous.keys() | current.keys():
+        if previous.get(name) != current.get(name):
+            audit.append({'at': nowstr(), 'name': name, 'before': previous.get(name), 'after': current.get(name)})
+    data['audit'] = audit[-200:]
     write_json(CONFIG_FILE, data)
 
 
@@ -160,7 +168,20 @@ class ExecutionLock:
 def claim_scheduled_run():
     state = get_state()
     if state.get('scheduled_at'):
-        return False
+        if not state.get('retry_pending') or state.get('scheduled_attempts', 1) >= 3:
+            return False
+        if time.time() - state.get('scheduled_epoch', time.time()) < 900:
+            return False
     state['scheduled_at'] = nowstr()
+    state['scheduled_epoch'] = time.time()
+    state['scheduled_attempts'] = state.get('scheduled_attempts', 0) + 1
+    state['retry_pending'] = False
     write_json(STATE_FILE, state)
     return True
+
+
+def set_retry_pending(value, detail=''):
+    state = get_state()
+    state['retry_pending'] = bool(value)
+    state['last_error'] = detail[:500]
+    write_json(STATE_FILE, state)
